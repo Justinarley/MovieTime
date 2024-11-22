@@ -2,21 +2,30 @@ import React from 'react';
 import { View, Text, Image, ScrollView } from 'react-native';
 import { Button, Card, InputItem, Carousel } from '@ant-design/react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+// Importar los tipos del stack
+type AuthStackParamList = {
+    Login: undefined;
+    Register: undefined;
+    Home: undefined;
+};
+
+type HomeScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
 
 const HomeScreen: React.FC = () => {
-    const navigation = useNavigation();
-
+    const navigation = useNavigation<HomeScreenNavigationProp>();
     // Datos de las imágenes del carrusel
     const carouselData = [
-        require('../assets/imagen1.jpg'),
-        require('../assets/imagen2.jpg'),
-        require('../assets/imagen3.jpg')
+        require('../assets/LOGO-MOVITIME.png'),
+        require('../assets/LOGO-MOVITIME.png'),
+        require('../assets/LOGO-MOVITIME.png')
     ];
 
     const manualCarouselData = [
-        require('../assets/imagen4.jpg'),
-        require('../assets/imagen5.jpg'),
-        require('../assets/imagen6.jpg')
+        require('../assets/LOGO-MOVITIME.png'),
+        require('../assets/LOGO-MOVITIME.png'),
+        require('../assets/LOGO-MOVITIME.png')
     ];
 
     return (
@@ -71,11 +80,6 @@ const HomeScreen: React.FC = () => {
 
             {/* Carrusel automático */}
             <Carousel
-                autoplay={true}
-                infinite={true}
-                dotStyle={{ backgroundColor: '#888' }}
-                activeDotStyle={{ backgroundColor: '#E50914' }}
-                style={{ height: 200 }}
             >
                 {carouselData.map((image, index) => (
                     <View key={index}>
@@ -87,11 +91,6 @@ const HomeScreen: React.FC = () => {
             {/* Carrusel manual */}
             <Text style={{ color: '#FFF', fontSize: 16, marginLeft: 20, marginTop: 20 }}>Películas en cartelera</Text>
             <Carousel
-                autoplay={false}
-                infinite={true}
-                dotStyle={{ backgroundColor: '#888' }}
-                activeDotStyle={{ backgroundColor: '#E50914' }}
-                style={{ height: 200 }}
                 >
                 {manualCarouselData.map((image, index) => (
                     <View key={index}>
@@ -120,26 +119,18 @@ const HomeScreen: React.FC = () => {
             {/* Promociones */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 20 }}>
                 <Card 
-                    style={{ width: '23%' }}
-                    bodyStyle={{ padding: 10, backgroundColor: '#333' }}
                 >
                     <Text style={{ color: '#FFF' }}>Promo 1</Text>
                 </Card>
                 <Card 
-                    style={{ width: '23%' }}
-                    bodyStyle={{ padding: 10, backgroundColor: '#333' }}
                 >
                     <Text style={{ color: '#FFF' }}>Promo 2</Text>
                 </Card>
                 <Card 
-                    style={{ width: '23%' }}
-                    bodyStyle={{ padding: 10, backgroundColor: '#333' }}
                 >
                     <Text style={{ color: '#FFF' }}>Promo 3</Text>
                 </Card>
                 <Card 
-                    style={{ width: '23%' }}
-                    bodyStyle={{ padding: 10, backgroundColor: '#333' }}
                 >
                     <Text style={{ color: '#FFF' }}>Promo 4</Text>
                 </Card>
