@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
-import { InputItem, Button, Checkbox } from '@ant-design/react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -25,7 +24,7 @@ const RegisterScreen: React.FC = () => {
     const [acceptTerms, setAcceptTerms] = useState(false);
     const navigation = useNavigation<RegisterScreenNavigationProp>();
 
-    const handleInputChange = (field: string, value: string) => {
+    const handleInputChange = (field: keyof typeof form, value: string) => {
         setForm((prevForm) => ({ ...prevForm, [field]: value }));
     };
 
@@ -34,135 +33,71 @@ const RegisterScreen: React.FC = () => {
             alert('Debe aceptar los términos y condiciones');
             return;
         }
-        // Aquí puedes añadir la lógica para registrar al usuario
         alert('Registro exitoso');
         navigation.navigate('Login');
     };
 
     return (
-        <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: '#121212', alignItems: 'center', justifyContent: 'center', paddingVertical: 20 }}>
-            <View style={{ width: '100%', maxWidth: 400, padding: 20, alignItems: 'center', justifyContent: 'center' }}>
+        <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.formContainer}>
                 {/* Título de la pantalla */}
-                <Text style={{ fontSize: 28, color: '#FFF', fontWeight: 'bold', marginBottom: 20, textAlign: 'center' }}>Registro</Text>
+                <Text style={styles.title}>Registro</Text>
 
                 {/* Campos del formulario */}
-                <InputItem
-                    value={form.cedula}
-                    placeholder="Número de cédula"
-                    placeholderTextColor="#AAA"
-                    onChangeText={(value) => handleInputChange('cedula', value)}
-                    style={{
-                        backgroundColor: '#333',
-                        borderRadius: 12,
-                        padding: 15,
-                        color: '#FFF', // Color del texto blanco
-                        marginBottom: 20,
-                        width: '80%',
-                    }}
-                />
-                <InputItem
-                    value={form.nombre}
-                    placeholder="Nombre"
-                    placeholderTextColor="#AAA"
-                    onChangeText={(value) => handleInputChange('nombre', value)}
-                    style={{
-                        backgroundColor: '#333',
-                        borderRadius: 12,
-                        padding: 15,
-                        color: '#FFF', // Color del texto blanco
-                        marginBottom: 20,
-                        width: '80%',
-                    }}
-                />
-                <InputItem
-                    value={form.apellido}
-                    placeholder="Apellido"
-                    placeholderTextColor="#AAA"
-                    onChangeText={(value) => handleInputChange('apellido', value)}
-                    style={{
-                        backgroundColor: '#333',
-                        borderRadius: 12,
-                        padding: 15,
-                        color: '#FFF', // Color del texto blanco
-                        marginBottom: 20,
-                        width: '80%',
-                    }}
-                />
-                <InputItem
-                    value={form.correo}
-                    placeholder="Correo electrónico"
-                    placeholderTextColor="#AAA"
-                    onChangeText={(value) => handleInputChange('correo', value)}
-                    style={{
-                        backgroundColor: '#333',
-                        borderRadius: 12,
-                        padding: 15,
-                        color: '#FFF', // Color del texto blanco
-                        marginBottom: 20,
-                        width: '80%',
-                    }}
-                    type="email-address"
-                />
-                <InputItem
-                    value={form.celular}
-                    placeholder="Número de celular"
-                    placeholderTextColor="#AAA"
-                    onChangeText={(value) => handleInputChange('celular', value)}
-                    style={{
-                        backgroundColor: '#333',
-                        borderRadius: 12,
-                        padding: 15,
-                        color: '#FFF', // Color del texto blanco
-                        marginBottom: 20,
-                        width: '80%',
-                    }}
-                    type="phone-pad"
-                />
-                <InputItem
-                    value={form.fechaNacimiento}
-                    placeholder="Fecha de nacimiento (YYYY-MM-DD)"
-                    placeholderTextColor="#AAA"
-                    onChangeText={(value) => handleInputChange('fechaNacimiento', value)}
-                    style={{
-                        backgroundColor: '#333',
-                        borderRadius: 12,
-                        padding: 15,
-                        color: '#FFF', // Color del texto blanco
-                        marginBottom: 20,
-                        width: '80%',
-                    }}
-                />
+                {Object.keys(form).map((key) => {
+                    const field = key as keyof typeof form; // Aseguramos que "field" sea del tipo correcto
+                    const placeholders: Record<keyof typeof form, string> = {
+                        cedula: 'Número de cédula',
+                        nombre: 'Nombre',
+                        apellido: 'Apellido',
+                        correo: 'Correo electrónico',
+                        celular: 'Número de celular',
+                        fechaNacimiento: 'Fecha de nacimiento (YYYY-MM-DD)',
+                    };
+
+                    return (
+                        <TextInput
+                            key={field}
+                            value={form[field]}
+                            placeholder={placeholders[field]}
+                            placeholderTextColor="#AAA"
+                            onChangeText={(value) => handleInputChange(field, value)}
+                            style={styles.input}
+                            keyboardType={
+                                field === 'correo'
+                                    ? 'email-address'
+                                    : field === 'celular'
+                                    ? 'phone-pad'
+                                    : 'default'
+                            }
+                        />
+                    );
+                })}
 
                 {/* Checkbox para términos y condiciones */}
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-                    <Checkbox
-                        checked={acceptTerms}
-                        onChange={() => setAcceptTerms(!acceptTerms)}
+                <View style={styles.checkboxContainer}>
+                    <TouchableOpacity
+                        style={[
+                            styles.checkbox,
+                            acceptTerms && { backgroundColor: '#E50914' },
+                        ]}
+                        onPress={() => setAcceptTerms(!acceptTerms)}
                     />
-                    <Text style={{ color: '#FFF', marginLeft: 10, fontSize: 14 }}>Acepto los términos y condiciones</Text>
+                    <Text style={styles.checkboxText}>
+                        Acepto los términos y condiciones
+                    </Text>
                 </View>
 
                 {/* Botón de registro */}
-                <Button
-                    type="primary"
-                    style={{
-                        backgroundColor: '#E50914',
-                        borderRadius: 10,
-                        width: '80%',
-                        padding: 15,
-                        alignItems: 'center',
-                        marginBottom: 20,
-                    }}
-                    onPress={handleRegister}
-                >
-                    Registrar
-                </Button>
+                <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                    <Text style={styles.buttonText}>Registrar</Text>
+                </TouchableOpacity>
 
                 {/* Botón para regresar al login */}
-                <Text style={{ color: '#FFF', fontSize: 14, marginTop: 10 }}>
+                <Text style={styles.loginText}>
                     ¿Ya tienes cuenta?{' '}
                     <Text
-                        style={{ color: '#FF5733', fontWeight: 'bold', textDecorationLine: 'underline' }}
+                        style={styles.loginLink}
                         onPress={() => navigation.navigate('Login')}
                     >
                         Inicia sesión
@@ -172,5 +107,76 @@ const RegisterScreen: React.FC = () => {
         </ScrollView>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flexGrow: 1,
+        backgroundColor: '#121212',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 20,
+    },
+    formContainer: {
+        width: '100%',
+        maxWidth: 400,
+        padding: 20,
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 28,
+        color: '#FFF',
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    input: {
+        backgroundColor: '#333',
+        borderRadius: 12,
+        padding: 15,
+        color: '#FFF',
+        marginBottom: 20,
+        width: '80%',
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: '#FFF',
+        marginRight: 10,
+    },
+    checkboxText: {
+        color: '#FFF',
+        fontSize: 14,
+    },
+    button: {
+        backgroundColor: '#E50914',
+        borderRadius: 10,
+        width: '80%',
+        padding: 15,
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    buttonText: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    loginText: {
+        color: '#FFF',
+        fontSize: 14,
+        marginTop: 10,
+    },
+    loginLink: {
+        color: '#FF5733',
+        fontWeight: 'bold',
+        textDecorationLine: 'underline',
+    },
+});
 
 export default RegisterScreen;

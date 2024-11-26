@@ -1,143 +1,214 @@
-import React from 'react';
-import { View, Text, Image, ScrollView } from 'react-native';
-import { Button, Card, InputItem, Carousel } from '@ant-design/react-native';
+import React, { useRef, useEffect } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  Animated,
+  TouchableOpacity,  // Usamos TouchableOpacity para el botón
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-// Importar los tipos del stack
+// Tipos del stack de navegación
 type AuthStackParamList = {
-    Login: undefined;
-    Register: undefined;
-    Home: undefined;
+  Login: undefined;
+  Register: undefined;
+  Home: undefined;
+  Cartelera: undefined;
 };
 
-type HomeScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
+type HomeScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Home'>;
 
 const HomeScreen: React.FC = () => {
-    const navigation = useNavigation<HomeScreenNavigationProp>();
-    // Datos de las imágenes del carrusel
-    const carouselData = [
-        require('../assets/LOGO-MOVITIME.png'),
-        require('../assets/LOGO-MOVITIME.png'),
-        require('../assets/LOGO-MOVITIME.png')
-    ];
+  const navigation = useNavigation<HomeScreenNavigationProp>();
 
-    const manualCarouselData = [
-        require('../assets/LOGO-MOVITIME.png'),
-        require('../assets/LOGO-MOVITIME.png'),
-        require('../assets/LOGO-MOVITIME.png')
-    ];
+  // Datos de las imágenes del carrusel
+  const carouselData = [
+    require('../assets/WyD.jpg'),
+    require('../assets/Gladiador.jpg'),
+    require('../assets/Venom.jpg'),
+    require('../assets/Robot.jpg'),
+    require('../assets/Moana.jpg'),
+    require('../assets/Intensamente.jpg'),
+  ];
 
-    return (
-        <ScrollView style={{ flex: 1, backgroundColor: '#121212' }}>
-            {/* Sección de logo y título */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
-                <Image 
-                    source={require('../assets/LOGO-MOVITIME.png')} 
-                    style={{ width: 40, height: 40, marginRight: 10 }} 
-                    resizeMode="contain" 
-                />
-                <Text style={{ fontSize: 24, color: '#FFF', fontWeight: 'bold' }}>MOVITIME</Text>
-            </View>
+  const promotions = [
+    require('../assets/PROMO1.png'),
+    require('../assets/PROMO2.jpg'),
+    require('../assets/PROMO3.png'),
+    require('../assets/PROMO4.png'),
+  ];
 
-            {/* Saludo */}
-            <Text style={{ fontSize: 18, color: '#FFF', marginLeft: 20, marginTop: 20 }}>
-                Bienvenido, <Text style={{ fontWeight: 'bold' }}>Nombre del Usuario</Text>
-            </Text>
+  // Carrusel automático
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const flatListRef = useRef<FlatList>(null);
 
-            {/* Botón de Ver Cartelera */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 10 }}>
-                <Text style={{ color: '#FFF', fontSize: 16 }}>Bienvenido al cine</Text>
-                <Button 
-                    type="ghost" 
-                    style={{
-                        backgroundColor: '#E50914', 
-                        borderRadius: 10, 
-                        width: 120, 
-                        paddingVertical: 10, 
-                        alignItems: 'center'
-                    }} 
-                    onPress={() => console.log('Cartelera')}
-                >
-                    Ver Cartelera
-                </Button>
-            </View>
+  // Variable para el índice actual
+  const currentIndex = useRef(0);
 
-            {/* Buscador */}
-            <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-                <InputItem 
-                    placeholder="Busca una película"
-                    style={{
-                        backgroundColor: '#333',
-                        borderRadius: 12,
-                        padding: 10,
-                        color: '#FFF',
-                        marginBottom: 20,
-                    }}
-                    placeholderTextColor="#AAA"
-                />
-            </View>
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Avanzar al siguiente índice de forma circular
+      currentIndex.current = (currentIndex.current + 1) % carouselData.length;
+      flatListRef.current?.scrollToIndex({
+        index: currentIndex.current,
+        animated: true,
+      });
+    }, 3000); // Mueve las imágenes cada 3 segundos
 
-            {/* Carrusel automático */}
-            <Carousel
-            >
-                {carouselData.map((image, index) => (
-                    <View key={index}>
-                        <Image source={image} style={{ width: '100%', height: 200 }} />
-                    </View>
-                ))}
-            </Carousel>
+    return () => clearInterval(interval);
+  }, [carouselData.length]);
 
-            {/* Carrusel manual */}
-            <Text style={{ color: '#FFF', fontSize: 16, marginLeft: 20, marginTop: 20 }}>Películas en cartelera</Text>
-            <Carousel
-                >
-                {manualCarouselData.map((image, index) => (
-                    <View key={index}>
-                    <Image source={image} style={{ width: '100%', height: 200 }} />
-                    </View>
-                ))}
-            </Carousel>
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Título */}
+      <View style={styles.header}>
+        <Text style={styles.title}>MOVITIME</Text>
+      </View>
 
+      {/* Bienvenida y botón en fila */}
+      <View style={styles.welcomeRow}>
+        <Text style={styles.welcomeText}>
+          Bienvenido, <Text style={styles.boldText}>Usuario</Text>
+        </Text>
+        <TouchableOpacity
+          style={styles.carteleraButton}
+          onPress={() => navigation.navigate('Cartelera')}
+        >
+          <Text style={styles.carteleraButtonText}>Cartelera</Text>
+        </TouchableOpacity>
+      </View>
 
-            {/* Botón para ver cartelera */}
-            <Button
-                type="primary"
-                style={{
-                    backgroundColor: '#E50914',
-                    borderRadius: 10,
-                    marginTop: 20,
-                    marginHorizontal: 20,
-                    paddingVertical: 15,
-                    alignItems: 'center',
-                }}
-                onPress={() => console.log('Cartelera')}
-            >
-                Ver Cartelera
-            </Button>
+      {/* Buscador */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          placeholder="Busca una película"
+          style={styles.searchInput}
+          placeholderTextColor="#AAA"
+        />
+      </View>
 
-            {/* Promociones */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 20 }}>
-                <Card 
-                >
-                    <Text style={{ color: '#FFF' }}>Promo 1</Text>
-                </Card>
-                <Card 
-                >
-                    <Text style={{ color: '#FFF' }}>Promo 2</Text>
-                </Card>
-                <Card 
-                >
-                    <Text style={{ color: '#FFF' }}>Promo 3</Text>
-                </Card>
-                <Card 
-                >
-                    <Text style={{ color: '#FFF' }}>Promo 4</Text>
-                </Card>
-            </View>
+      {/* Carrusel */}
+      <Text style={styles.carouselTitle}>Estrenos</Text>
+      <FlatList
+        ref={flatListRef}
+        data={carouselData}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(_, index) => `carousel-${index}`}
+        renderItem={({ item }) => (
+          <Image source={item} style={styles.carouselImage} />
+        )}
+        contentContainerStyle={styles.carouselContainer}
+        // Ajusta la vista para que solo se vea una imagen a la vez
+        snapToInterval={400} // El ancho de cada imagen
+        decelerationRate="fast"
+        snapToAlignment="center"
+      />
 
-        </ScrollView>
-    );
+      {/* Promociones */}
+      <Text style={styles.promoTitle}>Promociones</Text>
+      <View style={styles.promosContainer}>
+        {promotions.map((promo, index) => (
+          <Image key={index} source={promo} style={styles.promoImage} />
+        ))}
+      </View>
+    </ScrollView>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    backgroundColor: '#121212',
+    paddingBottom: 20,
+    paddingTop: 50, // Separar elementos superiores
+  },
+  header: {
+    alignItems: 'flex-start',
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 24,
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
+  welcomeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginTop: 20,
+  },
+  welcomeText: {
+    fontSize: 18,
+    color: '#FFF',
+  },
+  boldText: {
+    fontWeight: 'bold',
+  },
+  carteleraButton: {
+    backgroundColor: '#5A5A5A', // Fondo gris
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  carteleraButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  searchContainer: {
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
+  searchInput: {
+    backgroundColor: '#333',
+    borderRadius: 12,
+    padding: 10,
+    color: '#FFF',
+  },
+  carouselTitle: {
+    color: '#FFF',
+    fontSize: 24,
+    marginLeft: 20,
+    marginTop: 20,
+  },
+  carouselContainer: {
+    marginTop: 10,
+    paddingLeft: 20,
+  },
+  carouselImage: {
+    width: 350,
+    height: 500, // Imágenes más largas
+    marginRight: 10,
+    borderRadius: 12,
+  },
+  promoTitle: {
+    color: '#FFF',
+    fontSize: 24,
+    marginLeft: 20,
+    marginTop: 20,
+  },
+  promosContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  promoImage: {
+    width: '100%',
+    height: 150,
+    marginBottom: 10,
+    borderRadius: 12,
+  },
+});
 
 export default HomeScreen;
