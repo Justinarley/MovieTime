@@ -13,6 +13,7 @@ import {
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import Menu from '../components/Menu';
 
 // Tipos del stack de navegación
 type AuthStackParamList = {
@@ -76,6 +77,8 @@ const CarteleraScreen: React.FC = () => {
         onChangeText={setSearchQuery}
       />
       </View>
+
+    <Menu />
 
       {/* Botón para abrir el calendario */}
       <RNButton title="Cuando quieres ver tu película?" onPress={handleCalendarToggle} />

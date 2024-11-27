@@ -8,10 +8,11 @@ import {
   TextInput,
   FlatList,
   Animated,
-  TouchableOpacity,  // Usamos TouchableOpacity para el botón
+  TouchableOpacity,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import Menu from '../components/Menu';
 
 // Tipos del stack de navegación
 type AuthStackParamList = {
@@ -26,7 +27,6 @@ type HomeScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Home'>;
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
-  // Datos de las imágenes del carrusel
   const carouselData = [
     require('../assets/WyD.jpg'),
     require('../assets/Gladiador.jpg'),
@@ -91,6 +91,8 @@ const HomeScreen: React.FC = () => {
           placeholderTextColor="#AAA"
         />
       </View>
+
+      <Menu />
 
       {/* Carrusel */}
       <Text style={styles.carouselTitle}>Estrenos</Text>

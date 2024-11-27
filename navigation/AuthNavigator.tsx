@@ -4,6 +4,8 @@ import LoginScreen from '../screens/LoginScreen';  // Asegúrate de que la ruta 
 import RegisterScreen from '../screens/RegisterScreen';  // Asegúrate de que la ruta sea correcta
 import HomeScreen from '../screens/HomeScreen';
 import CarteleraScreen from '../screens/CarteleraScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import Menu from '../components/Menu';
 
 // Define los tipos de las rutas
 type AuthStackParamList = {
@@ -11,6 +13,8 @@ type AuthStackParamList = {
     Register: undefined;
     Home: undefined;
     Cartelera: undefined;
+    Profile: undefined;
+    // Menu: undefined;
 };
 
 const AuthStack = createStackNavigator<AuthStackParamList>();
@@ -28,6 +32,8 @@ const AuthNavigator: React.FC = () => {
             <AuthStack.Screen name="Register" component={RegisterScreen} />
             <AuthStack.Screen name="Home" component={HomeScreen} />
             <AuthStack.Screen name="Cartelera" component={CarteleraScreen} />
+            <AuthStack.Screen name="Profile" component={ProfileScreen} />
+            {/* <AuthStack.Screen name="Menu" component={Menu} /> */}
         </AuthStack.Navigator>
     );
 };
